@@ -20,16 +20,16 @@
 #include "menus.h"
 // #include "utils.h"
 
-int JogoAnterior(){
+bool JogoAnterior(){
     FILE * saveFile;
-    saveFile = fopen("LastGameSave.bin", "r"); // read-only. só vai verificar se o ficheiro existe.
+    saveFile = fopen("LastGameSave.bin", "rb"); // read-only. só vai verificar se o ficheiro existe.
     if (saveFile){
         // ISTO SIGNIFICA QUE EXISTE UM JOGO ANTERIOR GUARDADO QUE NÃO FOI TERMINADO
         fclose(saveFile);
-        return 1;
+        return true;
     }else{
         // ISTO SIGNIFICA QUE NÃO EXISTE NENHUM SAVE ANTERIOR OU QUE O JOGO ANTERIOR FOI TERMINADO
-        return 0;
+        return false;
     }
 }
 
@@ -62,21 +62,21 @@ int main() {
     int inputMenu = 0;
     bool avancar = false;
 
-    int HaJogoAnterior = JogoAnterior();
+    bool HaJogoAnterior = JogoAnterior();
 
-    if(HaJogoAnterior == 1){
+    if (HaJogoAnterior == true) {
         printf("\nDeixou um jogo por completar! Deseja continuar ou voltar para o menu?\n\n1 - Continuar\n2 - Voltar ao menu");
         scanf("%d", &inputMenu);
-        if(inputMenu == 1) {
+        if (inputMenu == 1) {
             printf("\nGanda fixe!");
-        }
-        else if (inputMenu == 2) {
-            menu;
+        } else if (inputMenu == 2) {
+            menu();
         }
         else printf("\nInput invalido! Volte a tentar.");
     }
-    if(HaJogoAnterior == 0){
-        menu;
+
+    if (HaJogoAnterior == false){
+        menu();
     }
 
     return 0;
