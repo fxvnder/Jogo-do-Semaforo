@@ -1,5 +1,6 @@
-// Trabalho Pratico Programacao - LEI
+// Trabalho Pratico de P
 // DEIS-ISEC 2020-2021
+// João Oliveira, nº 2018012875
 
 #ifndef UTILS_H
 #define UTILS_H
