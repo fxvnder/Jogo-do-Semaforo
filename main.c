@@ -9,11 +9,17 @@
 
 #include <stdbool.h>
 // decidi incluir o stdbool, pois é parte do standard C99 e eu sou dependente de boolean, sendo que é de boa prática
-// usá-lo para variáveis descartáveis :P
+// usá-lo para variáveis descartáveis e proteção do programa :P
+
+// também podia fazer
+// #define char bool
+// #define true 1
+// #define false 0
+// mas não tem tanta piada x]
 
 //  #include <unistd.h>
 //  ^^  decidi não usar o access() para ficheiros, para não arriscar ter problemas com compilação noutros PCs,
-//      apesar de ser uma library standard de C.
+//      apesar de ser uma library standard do C99.
 
 // Header Files
 
@@ -40,22 +46,29 @@ void NovoJogo(char Filename[]){
 void menu(){
     int inputMenu = 0;
     char Filename[20];
+    bool avancar = false;
 
     MenuInicial();
 
-    scanf("%d", &inputMenu);
+    do {
+        scanf("%d", &inputMenu);
 
-    if(inputMenu == 1){
-        printf("\nQual vai ser o nome do seu jogo?\n");
-        scanf("%s", &Filename);
-        //NovoJogo(Filename);
-    }
-    else if(inputMenu == 2){
-        //getSaveGame();
-    }
-    else if(inputMenu == 3){
-        exit;
-    }
+        if(inputMenu == 1){
+            avancar = true;
+            printf("\nQual vai ser o nome do seu jogo?\n");
+            scanf("%s", &Filename);
+            //NovoJogo(Filename);
+        }
+        else if(inputMenu == 2){
+            avancar = true;
+            //getSaveGame();
+        }
+        else if(inputMenu == 3){
+            exit;
+        }
+        else printf("\nInput invalido! Tente novamente.\n>");
+    } while (avancar == false);
+
 }
 
 int main() {
@@ -65,19 +78,19 @@ int main() {
     bool HaJogoAnterior = JogoAnterior();
 
     if (HaJogoAnterior == true) {
-        printf("\nDeixou um jogo por completar! Deseja continuar ou voltar para o menu?\n\n1 - Continuar\n2 - Voltar ao menu");
-        scanf("%d", &inputMenu);
-        if (inputMenu == 1) {
-            printf("\nGanda fixe!");
-        } else if (inputMenu == 2) {
-            menu();
-        }
-        else printf("\nInput invalido! Volte a tentar.");
-    }
-
-    if (HaJogoAnterior == false){
-        menu();
-    }
+        do {
+            printf("\nDeixou um jogo por completar! Deseja continuar ou voltar para o menu?\n\n1 - Continuar\n2 - Voltar ao menu");
+            scanf("%d", &inputMenu);
+            if (inputMenu == 1) {
+                avancar = true;
+                printf("\nGanda fixe!");
+            } else if (inputMenu == 2) {
+                avancar = true;
+                menu();
+            }
+            else printf("\nInput invalido! Volte a tentar.");
+        } while (avancar == false);
+    } else menu();
 
     return 0;
 }
