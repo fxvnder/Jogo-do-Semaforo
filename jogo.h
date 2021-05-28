@@ -5,6 +5,19 @@
 #ifndef CODIGO_JOGO_H
 #define CODIGO_JOGO_H
 
-#endif //CODIGO_JOGO_H
+#define TAMANHOX 30
+
+typedef struct Players{
+    char UserName[TAMANHOX];
+    int PowerUps[2];
+}Player;
+
+typedef struct TabuleiroStruct{
+    int coluna;
+    int linha;
+    char simbolo;
+}TabuleiroStr;
 
 void StartGame();
+
+#endif //CODIGO_JOGO_H

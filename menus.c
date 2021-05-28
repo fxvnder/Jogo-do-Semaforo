@@ -28,7 +28,7 @@ void MenuInicial(){
     )EOF");
 
     printf("Bem vindo ao jogo do semaforo!\n");
-    printf("\nSelecione\n\n1 - Novo Jogo\n2 - Carregar Jogo\n3 - Sair\n9 - Ajuda\n>");
+    printf("\nSelecione\n\n1 - Novo Jogo\n2 - Carregar Jogo\n3 - Ajuda\n9 - Sair\n>");
 }
 
 void ComandoAjuda(){

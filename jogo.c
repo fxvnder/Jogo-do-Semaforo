@@ -11,14 +11,14 @@
 // decidi incluir o stdbool, pois é parte do standard C99 e eu sou dependente de boolean, sendo que é de boa prática
 // usá-lo para variáveis descartáveis e proteção do programa :P
 
-#include <string.h>
-// #include <conio.h>
-
 // também podia fazer
 // #define char bool
 // #define true 1
 // #define false 0
 // mas não tem tanta piada x]
+
+#include <string.h>
+// #include <conio.h>
 
 //  #include <unistd.h>
 //  ^^  decidi não usar o access() para ficheiros, para não arriscar ter problemas com compilação noutros PCs,
@@ -28,39 +28,49 @@
 
 #include "menus.h"
 #include "jogo.h"
-// #include "utils.h"
+#include "utils.h"
 
 // DEFINE + STRUCTS
 
-#define LINHASDEFAULT 4
-#define COLUNASDEFAULT 4
+//#define LINHASDEFAULT 9 // TAMANHO MAXIMO POSSIVEL
+//#define COLUNASDEFAULT 9 // TAMANHO MAXIMO POSSIVEL
 #define TAMANHOX 30
 
-typedef struct Players{
-    char UserName[TAMANHOX];
-    int PowerUps[2];
-}Player;
+
+// esta funcao vai fazer o tabuleiro inicial ter todos os caracteres vazios.
+void CriaTabuleiroInicial(){
+
+    printf("\nA iniciar jogo...");
+    for (int i = 0; i < RandomSizedTabuleiro; ++i) {
+        for (int j = 0; j < RandomSizedTabuleiro; ++j) {
+            Tabuleiro[i][j] = ' ';
+        }
+    }
+    printf("\nTabuleiro criado com sucesso!");
+}
 
 void ImprimeTabuleiro(char Tabuleiro[LINHASDEFAULT][COLUNASDEFAULT], int Linh, int Cols){
+    printf("\nTabuleiro:\n");
     for(int i=0;i<Linh;i++){
         for(int j=0;j<Cols;j++){
-            printf("%c\t",Tabuleiro[i][j]);
+            printf("[ %c ]\t",Tabuleiro[i][j]); // vai imprimir as linhas, basicamente
         }
+        printf("\n");
     }
 }
 
 Player CriaJogador(char PlayerUsername[TAMANHOX]){
     Player Jogador;
-    strcpy(Jogador.UserName, PlayerUsername);
-    Jogador.PowerUps[0] = 0;
-    Jogador.PowerUps[1] = 0;
+    strcpy(Jogador.UserName, PlayerUsername); // atribui o nickname ao jogador
+    Jogador.PowerUps[0] = 0; // Adiciona pedra = 0, o jogo ainda nao comecou, ele ainda nao usou este power up
+    Jogador.PowerUps[1] = 0; // Adiciona linha/coluna = 0 ^^ idem
     return Jogador;
 }
 
-char RecebeJogada(){
+char RecebeJogada(Player JogadorRonda){
     char Jogada;
 
-    printf("\nO que pretende fazer?\n>");
+    printf("\nO que pretende fazer, %c?\nInsira o num da coluna ou 's' para sair\n>", *JogadorRonda.UserName);
     scanf("%c", &Jogada);
 
     return Jogada;
@@ -81,49 +91,76 @@ bool JogoAnterior(){
 }
 
 void NovoJogo(Player Player1, Player Player2, char Filename[]){
-
+    // criacao do tabuleiro
+    TabuleiroStruct Tabuleiro;
+    initRandom(); // inicia o randomizer
+    int RandomSizedTabuleiro = intUniformRnd(3,5); // obtem o tamanho do tabuleiro
+    char* TabPtr = (char*)malloc(RandomSizedTabuleiro*sizeof(char));
+    char TabuleiroPrincipal[*TabPtr][*TabPtr];
+    int nRondas = 1;
+    bool QueroSair = false;
+    CriaTabuleiroInicial(TabuleiroPrincipal);
+    do {
+        ImprimeTabuleiro(TabuleiroPrincipal,RandomSizedTabuleiro,RandomSizedTabuleiro);
+        RecebeJogada(Player1);
+        ImprimeTabuleiro(TabuleiroPrincipal,RandomSizedTabuleiro,RandomSizedTabuleiro);
+        RecebeJogada(Player2);
+        QueroSair = true;
+    } while (!QueroSair);
 }
 
 void menu(){
-    int inputMenu = 0;
-    char Filename[20];
+    char inputMenu = 0;
+    char Filename[TAMANHOX];
     bool avancar = false;
-    char UserName1[20];
-    char UserName2[20];
+    char UserName1[TAMANHOX];
+    char UserName2[TAMANHOX];
 
     MenuInicial();
 
     do {
-        scanf("%d", &inputMenu);
 
-        if(inputMenu == 1){
-            avancar = true;
-            printf("\nQual vai ser o nome do Jogador 1?\n> ");
-            scanf("%s", &UserName1);
-            printf("\nQual vai ser o nome do Jogador 2?\n> ");
-            scanf("%s", &UserName2);
-            printf("\nQual vai ser o nome do seu jogo?\n> ");
-            scanf("%s", &Filename);
-            NovoJogo(CriaJogador(UserName1), CriaJogador(UserName2), Filename);
+        scanf("%c", &inputMenu);
+
+        switch (inputMenu) {
+
+            case '1':
+                avancar = true;
+                printf("\nQual vai ser o nickname do Jogador A?\n> ");
+                scanf("%s", &UserName1[TAMANHOX]);
+                printf("\nQual vai ser o nickname do Jogador B?\n> ");
+                scanf("%s", &UserName2[TAMANHOX]);
+                printf("\nQual vai ser o nome do seu jogo?\n> ");
+                scanf("%s", &Filename[TAMANHOX]);
+                NovoJogo(CriaJogador(UserName1), CriaJogador(UserName2), Filename);
+                break;
+
+            case '2':
+                avancar = true;
+                //getSaveGame();
+                break;
+
+            case '3':
+                avancar = false;
+                ComandoAjuda();
+                break;
+
+            case '9':
+                avancar = true;
+                exit(0);
+                // break; - nao necessario por causa do exit
+
+            default:
+                printf("\nInput invalido! Tente novamente.\n>");
+
         }
-        else if(inputMenu == 2){
-            avancar = true;
-            //getSaveGame();
-        }
-        else if(inputMenu == 3){
-            avancar = true;
-            exit;
-        }
-        else if(inputMenu == 9){
-            avancar = false;
-            ComandoAjuda();
-        }
-        else printf("\nInput invalido! Tente novamente.\n>");
+
     } while (avancar == false);
+
 }
 
 void StartGame(){
-    int inputMenu = 0;
+    char inputMenu = '0';
     bool avancar = false;
 
     bool HaJogoAnterior = JogoAnterior();
@@ -131,11 +168,11 @@ void StartGame(){
     if (HaJogoAnterior == true) {
         do {
             printf("\nDeixou um jogo por completar! Deseja continuar ou voltar para o menu?\n\n1 - Continuar\n2 - Voltar ao menu");
-            scanf("%d", &inputMenu);
-            if (inputMenu == 1) {
+            scanf("%c", &inputMenu);
+            if (inputMenu == '1') {
                 avancar = true;
                 printf("\nGanda fixe!");
-            } else if (inputMenu == 2) {
+            } else if (inputMenu == '2') {
                 avancar = true;
                 menu();
             }
