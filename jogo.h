@@ -7,15 +7,21 @@
 
 #define TAMANHOX 30
 
+#define TAMANHOMINIMO 3
+
+// struct dos Jogadores
+
 typedef struct Players{
     char UserName[TAMANHOX];
     int PowerUps[2];
 }Player;
 
+// struct do tabuleiro
+
 typedef struct TabuleiroStruct{
     int coluna;
     int linha;
-    char simbolo;
+    char **tab;
 }TabuleiroStr;
 
 void StartGame();

@@ -22,7 +22,8 @@ int probEvento(float prob){
 
 
 // Função main () com alguns exemplos simples de utilizacao das funcoes
-//int main(){
+//
+// int main(){
 //
 //  int i;
 //
@@ -37,4 +38,4 @@ int probEvento(float prob){
 //        printf("%d\n", probEvento(0.25));
 //
 //    return 0;
-//}
+// }

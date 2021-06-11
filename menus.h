@@ -5,7 +5,8 @@
 #ifndef CODIGO_MENUS_H
 #define CODIGO_MENUS_H
 
-#endif //CODIGO_MENUS_H
-
 void MenuInicial();
+
 void ComandoAjuda();
+
+#endif //CODIGO_MENUS_H

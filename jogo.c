@@ -34,30 +34,62 @@
 
 //#define LINHASDEFAULT 9 // TAMANHO MAXIMO POSSIVEL
 //#define COLUNASDEFAULT 9 // TAMANHO MAXIMO POSSIVEL
-#define TAMANHOX 30
+//#define TAMANHOX 30
 
 
-// esta funcao vai fazer o tabuleiro inicial ter todos os caracteres vazios.
-void CriaTabuleiroInicial(){
+// CODIGO DO JOGO
 
-    printf("\nA iniciar jogo...");
-    for (int i = 0; i < RandomSizedTabuleiro; ++i) {
-        for (int j = 0; j < RandomSizedTabuleiro; ++j) {
-            Tabuleiro[i][j] = ' ';
-        }
-    }
-    printf("\nTabuleiro criado com sucesso!");
+
+// LIMPA A MEMORIA
+
+void limparMemoriaTab(TabuleiroStr tabuleiroJogo) {
+    free(tabuleiroJogo.tab);
+    printf("Memoria limpa! Ate a proxima!");
 }
 
-void ImprimeTabuleiro(char Tabuleiro[LINHASDEFAULT][COLUNASDEFAULT], int Linh, int Cols){
+// CRIA O TABULEIRO DO JOGO
+
+TabuleiroStr CriaTabuleiro(){
+    TabuleiroStr tabuleiroJogo;
+
+    tabuleiroJogo.linha = intUniformRnd(3,5); // obtem o tamanho do tabuleiro
+    tabuleiroJogo.coluna = tabuleiroJogo.linha; // obtem o tamanho do tabuleiro
+
+    printf("\nA carregar... A criar Tabuleiro...");
+    tabuleiroJogo.tab = malloc(sizeof(char*) * tabuleiroJogo.linha);
+    for (int i = 0; i < tabuleiroJogo.linha; ++i) {
+        tabuleiroJogo.tab[i] = (char*) malloc(tabuleiroJogo.coluna);
+    }
+    printf("\nA carregar... Tabuleiro criado com sucesso!");
+
+    return tabuleiroJogo;
+}
+
+// INICIA O TABULEIRO DO JOGO
+
+void CriaTabuleiroInicial(TabuleiroStr tabuleiroJogo){
+    printf("\nA carregar... A iniciar tabuleiro...\n");
+    for (int i = 0; i < tabuleiroJogo.linha; ++i) {
+        for (int j = 0; j < tabuleiroJogo.coluna; ++j) {
+            tabuleiroJogo.tab[i][j] = '_';
+        }
+    }
+    printf("\nA carregar...Tabuleiro iniciado com sucesso!");
+}
+
+// IMPRIME O TABULEIRO
+
+void ImprimeTabuleiro(TabuleiroStr tabuleiroJogo){
     printf("\nTabuleiro:\n");
-    for(int i=0;i<Linh;i++){
-        for(int j=0;j<Cols;j++){
-            printf("[ %c ]\t",Tabuleiro[i][j]); // vai imprimir as linhas, basicamente
+    for(int i=0;i<tabuleiroJogo.linha;i++){
+        for(int j=0;j<tabuleiroJogo.coluna;j++){
+            printf("[ %c ]\t",tabuleiroJogo.tab[i][j]); // vai imprimir as linhas, basicamente
         }
         printf("\n");
     }
 }
+
+// CRIA JOGADOR
 
 Player CriaJogador(char PlayerUsername[TAMANHOX]){
     Player Jogador;
@@ -67,6 +99,8 @@ Player CriaJogador(char PlayerUsername[TAMANHOX]){
     return Jogador;
 }
 
+// MANAGE DAS JOGADAS
+
 char RecebeJogada(Player JogadorRonda){
     char Jogada;
 
@@ -75,6 +109,8 @@ char RecebeJogada(Player JogadorRonda){
 
     return Jogada;
 }
+
+// CARREGA JOGO
 
 bool JogoAnterior(){
     FILE * saveFile;
@@ -90,28 +126,35 @@ bool JogoAnterior(){
     }
 }
 
-void NovoJogo(Player Player1, Player Player2, char Filename[]){
-    // criacao do tabuleiro
-    TabuleiroStruct Tabuleiro;
+// NOVO JOGO
+
+void NovoJogo(Player Player1, Player Player2, char Filename){
+
     initRandom(); // inicia o randomizer
-    int RandomSizedTabuleiro = intUniformRnd(3,5); // obtem o tamanho do tabuleiro
-    char* TabPtr = (char*)malloc(RandomSizedTabuleiro*sizeof(char));
-    char TabuleiroPrincipal[*TabPtr][*TabPtr];
+
+    TabuleiroStr TabuleiroJogo = CriaTabuleiro();
+
     int nRondas = 1;
     bool QueroSair = false;
-    CriaTabuleiroInicial(TabuleiroPrincipal);
+
+    CriaTabuleiroInicial(TabuleiroJogo);
+
     do {
-        ImprimeTabuleiro(TabuleiroPrincipal,RandomSizedTabuleiro,RandomSizedTabuleiro);
+        ImprimeTabuleiro(TabuleiroJogo);
         RecebeJogada(Player1);
-        ImprimeTabuleiro(TabuleiroPrincipal,RandomSizedTabuleiro,RandomSizedTabuleiro);
+        ImprimeTabuleiro(TabuleiroJogo);
         RecebeJogada(Player2);
         QueroSair = true;
     } while (!QueroSair);
+
+    limparMemoriaTab(TabuleiroJogo);
 }
+
+// MENU INICIAL
 
 void menu(){
     char inputMenu = 0;
-    char Filename[TAMANHOX];
+    char Filename;
     bool avancar = false;
     char UserName1[TAMANHOX];
     char UserName2[TAMANHOX];
@@ -131,7 +174,7 @@ void menu(){
                 printf("\nQual vai ser o nickname do Jogador B?\n> ");
                 scanf("%s", &UserName2[TAMANHOX]);
                 printf("\nQual vai ser o nome do seu jogo?\n> ");
-                scanf("%s", &Filename[TAMANHOX]);
+                scanf("%s", &Filename);
                 NovoJogo(CriaJogador(UserName1), CriaJogador(UserName2), Filename);
                 break;
 
@@ -158,6 +201,8 @@ void menu(){
     } while (avancar == false);
 
 }
+
+// INICIO DO JOGO
 
 void StartGame(){
     char inputMenu = '0';
